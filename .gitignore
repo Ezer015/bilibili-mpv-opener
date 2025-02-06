@@ -1,0 +1,19 @@
+# Build output
+dist/
+*.zip
+*.xpi
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Editor specific
+.vscode/
+.idea/
+*.swp
+*.swo

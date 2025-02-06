@@ -1,0 +1,52 @@
+name: Release Build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version and check for update
+        id: version
+        run: |
+          CURRENT_VERSION=$(jq -r '.version' src/manifest.json)
+          echo "version=v$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          
+          # Get latest release tag (if any)
+          LATEST_TAG=$(gh release view --json tagName --jq .tagName || echo "v0.0")
+          
+          # Remove 'v' prefix for version comparison
+          LATEST_VERSION=${LATEST_TAG#v}
+          echo "has_update=false" >> $GITHUB_OUTPUT
+          
+          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+            echo "has_update=true" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - if: steps.version.outputs.has_update == 'true'
+        name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - if: steps.version.outputs.has_update == 'true'
+        name: Build release
+        run: python scripts/make_dist.py
+
+      - if: steps.version.outputs.has_update == 'true'
+        name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
+          files: dist/bilibili-mpv-opener-release.zip
+          draft: false
+          prerelease: false
+          generate_release_notes: true
