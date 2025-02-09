@@ -21,6 +21,7 @@ A Firefox extension that enhances your Bilibili viewing experience by adding the
 - 🎮 **Native MPV Integration** - Superior playback performance and features
 - 🎯 **Universal Support** - Works on most Bilibili video pages
 - ⚡ **Lightweight** - Minimal resource usage
+- 🔄 **Shadow DOM Compatible** - Support for [bewlybewly](https://github.com/BewlyBewly/BewlyBewly) extension's custom UI
 
 ## 🚀 Quick Start
 

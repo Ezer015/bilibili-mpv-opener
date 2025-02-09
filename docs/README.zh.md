@@ -21,6 +21,7 @@
 - 🎮 **原生 MPV 集成** - 卓越的播放性能和功能
 - 🎯 **通用支持** - 适用于大多数 Bilibili 视频页面
 - ⚡ **轻量级** - 最小的资源占用
+- 🔄 **Shadow DOM 兼容** - 支持 [bewlybewly](https://github.com/BewlyBewly/BewlyBewly) 扩展的自定义界面
 
 ## 🚀 快速开始
 

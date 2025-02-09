@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Bilibili MPV Opener",
-  "version": "0.1",
+  "version": "0.2",
   "description": "Opens Bilibili videos in MPV instead of browser",
   
   "browser_specific_settings": {
