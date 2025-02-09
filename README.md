@@ -2,13 +2,14 @@
 
 # 🎬 Bilibili MPV Opener
 
-A Firefox extension that enhances your Bilibili viewing experience by adding the ability to open videos directly in MPV player.
+A browser extension that enhances your Bilibili viewing experience by adding the ability to open videos directly in MPV player.
 
 **English** | [简体中文](docs/README.zh.md)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Firefox](https://img.shields.io/badge/Firefox-109%2B-FF7139)](https://www.mozilla.org/firefox/new/)
-[![MPV](https://img.shields.io/badge/MPV-Latest-7B68EE)](https://mpv.io)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Firefox](https://img.shields.io/badge/Firefox-Support-FF7139?style=flat-square&logo=firefox)](https://www.mozilla.org/firefox/new/)
+[![Chrome](https://img.shields.io/badge/Chrome-Support-4285F4?style=flat-square&logo=googlechrome)](https://www.google.com/chrome/)
+[![MPV](https://img.shields.io/badge/MPV-Player-7B68EE?style=flat-square&logo=mpv)](https://mpv.io)
 
 ![Screenshot](docs/images/screenshot.png)
 
@@ -44,11 +45,31 @@ A Firefox extension that enhances your Bilibili viewing experience by adding the
 
 3. **Setup & Install**
 
-   ```bash
-   python3 scripts/setup_native_host.py
-   ```
+   1. Install the extension for your browser:
 
-   Then double-click `bilibili-mpv-opener.xpi` in Firefox
+      **Firefox**:
+      - Double-click `firefox/bilibili-mpv-opener.xpi`
+
+      **Chrome**:
+      1. Extract `chrome/bilibili-mpv-opener.zip`
+      2. Go to `chrome://extensions/`
+      3. Enable "Developer mode" in the top-right
+      4. Click "Load unpacked" and select the extracted folder
+      5. Copy your extension ID from the extension card
+
+   2. Run the setup script:
+
+      ```bash
+      # Linux/macOS:
+      python3 scripts/setup.py
+
+      # Windows:
+      python scripts/setup.py
+      ```
+
+      Then follow the prompts to:
+      - Choose which browser(s) to configure
+      - For Chrome, provide your extension ID when prompted
 
 ## 📖 Usage
 
@@ -60,39 +81,34 @@ A Firefox extension that enhances your Bilibili viewing experience by adding the
 
 ### Prerequisites
 
-- Firefox 109+
+- Firefox / Chrome
 - Python 3.x
 - MPV player
 
 ### Local Testing
 
-```bash
-# Install native host
-python3 scripts/setup_native_host.py
+1. Run development setup:
 
-# Load in Firefox
-about:debugging > This Firefox > Load Temporary Add-on > src/manifest.json
-```
+   ```bash
+   python3 scripts/dev_setup.py
+   ```
 
-### Project Structure
+   Follow the prompts to select your browser. This will create manifest.json with the appropriate settings.
 
-```
-bilibili-mpv-opener/
-├── src/                  # Extension source
-│   ├── manifest.json     # Extension manifest
-│   ├── content.js        # Content script
-│   └── background.js     # Background script
-├── native/              # Native messaging
-│   └── open_in_mpv.py   # MPV integration
-├── scripts/             # Utilities
-│   ├── setup_native_host.py
-│   └── make_dist.py
-└── docs/               # Documentation
-```
+2. Load the extension:
+   - The script will display browser-specific loading instructions
+
+3. Run setup script:
+
+   ```bash
+   python3 scripts/setup.py
+   ```
+
+The release build process uses manifest.base.json to create appropriate manifests for each browser.
 
 ### Release Process
 
-1. Update version in `src/manifest.json`
+1. Update version in `src/manifest.base.json`
 2. Push to main branch
 3. GitHub Actions automatically:
    - Verifies version update

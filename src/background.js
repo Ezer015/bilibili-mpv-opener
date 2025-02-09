@@ -19,7 +19,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (!port) {
             connectNativeHost();
         }
-        
+
         // Send URL to native host to open in MPV
         port.postMessage({
             action: "open",

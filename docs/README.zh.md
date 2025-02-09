@@ -2,13 +2,14 @@
 
 # 🎬 Bilibili MPV Opener
 
-一个 Firefox 扩展，通过添加在 MPV 播放器中直接打开视频的功能，增强你的 Bilibili 观看体验。
+一个浏览器扩展，通过添加在 MPV 播放器中直接打开视频的功能，增强你的 Bilibili 观看体验。
 
 [English](../README.md) | **简体中文**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Firefox](https://img.shields.io/badge/Firefox-109%2B-FF7139)](https://www.mozilla.org/firefox/new/)
-[![MPV](https://img.shields.io/badge/MPV-Latest-7B68EE)](https://mpv.io)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Firefox](https://img.shields.io/badge/Firefox-Support-FF7139?style=flat-square&logo=firefox)](https://www.mozilla.org/firefox/new/)
+[![Chrome](https://img.shields.io/badge/Chrome-Support-4285F4?style=flat-square&logo=googlechrome)](https://www.google.com/chrome/)
+[![MPV](https://img.shields.io/badge/MPV-Player-7B68EE?style=flat-square&logo=mpv)](https://mpv.io)
 
 ![截图](../docs/images/screenshot.png)
 
@@ -44,11 +45,31 @@
 
 3. **设置与安装**
 
-   ```bash
-   python3 scripts/setup_native_host.py
-   ```
+   1. 根据你的浏览器安装扩展：
 
-   然后在 Firefox 中双击 `bilibili-mpv-opener.xpi`
+      **Firefox**：
+      - 双击 `firefox/bilibili-mpv-opener.xpi`
+
+      **Chrome**：
+      1. 解压 `chrome/bilibili-mpv-opener.zip`
+      2. 访问 `chrome://extensions/`
+      3. 打开右上角的"开发者模式"
+      4. 点击"加载已解压的扩展程序"并选择解压后的文件夹
+      5. 从扩展卡片中复制你的扩展ID
+
+   2. 运行安装脚本：
+
+      ```bash
+      # Linux/macOS：
+      python3 scripts/setup.py
+
+      # Windows：
+      python scripts/setup.py
+      ```
+
+      然后根据提示：
+      - 选择需要配置的浏览器
+      - 如果选择 Chrome，需要提供扩展ID
 
 ## 📖 使用方法
 
@@ -60,39 +81,34 @@
 
 ### 前提条件
 
-- Firefox 109+
+- Firefox / Chrome
 - Python 3.x
 - MPV 播放器
 
 ### 本地测试
 
-```bash
-# 安装本地主机
-python3 scripts/setup_native_host.py
+1. 运行开发配置：
 
-# 在 Firefox 中加载
-about:debugging > 此 Firefox > 临时载入附加组件 > src/manifest.json
-```
+   ```bash
+   python3 scripts/dev_setup.py
+   ```
 
-### 项目结构
+   按照提示选择你的浏览器。脚本会创建相应配置的 manifest.json。
 
-```
-bilibili-mpv-opener/
-├── src/                  # 扩展源码
-│   ├── manifest.json     # 扩展清单
-│   ├── content.js        # 内容脚本
-│   └── background.js     # 后台脚本
-├── native/              # 本地消息传递
-│   └── open_in_mpv.py   # MPV 集成
-├── scripts/             # 实用工具
-│   ├── setup_native_host.py
-│   └── make_dist.py
-└── docs/               # 文档
-```
+2. 加载扩展：
+   - 脚本会显示特定浏览器的加载说明
+
+3. 运行安装脚本：
+
+   ```bash
+   python3 scripts/setup.py
+   ```
+
+发行版构建过程使用 manifest.base.json 为每个浏览器创建适当的清单文件。
 
 ### 发布流程
 
-1. 更新 `src/manifest.json` 中的版本
+1. 更新 `src/manifest.base.json` 中的版本
 2. 推送到主分支
 3. GitHub Actions 自动：
    - 验证版本更新

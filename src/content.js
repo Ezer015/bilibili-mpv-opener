@@ -57,7 +57,8 @@ const mpvStyles = `
 /* Track hover state of all possible video containers */
 .bili-video-card:hover .mpv-container .mpv-play-button,
 .card-box:hover .mpv-container .mpv-play-button,
-.video-card:hover .mpv-container .mpv-play-button {
+.video-card:hover .mpv-container .mpv-play-button,
+.suit-video-card:hover .mpv-container .mpv-play-button {
     opacity: 1;
 }`;
 // Function to inject styles
@@ -165,7 +166,8 @@ function observeVideoThumbnails() {
     const selectors = [
         '.bili-video-card',
         '.card-box',
-        '.video-card'
+        '.video-card',
+        '.suit-video-card',
     ];
 
     selectors.forEach(selector => {

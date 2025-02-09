@@ -1,19 +1,16 @@
-# Build output
+# Build artifacts
 dist/
 *.zip
 *.xpi
+
+# Generated files
+src/manifest.json
 
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 
-# OS specific
-.DS_Store
-Thumbs.db
-
-# Editor specific
+# Development environments
 .vscode/
 .idea/
-*.swp
-*.swo

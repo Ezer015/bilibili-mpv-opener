@@ -17,16 +17,16 @@ jobs:
       - name: Get version and check for update
         id: version
         run: |
-          CURRENT_VERSION=$(jq -r '.version' src/manifest.json)
+          CURRENT_VERSION=$(jq -r '.version' src/manifest.base.json)
           echo "version=v$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          
+
           # Get latest release tag (if any)
           LATEST_TAG=$(gh release view --json tagName --jq .tagName || echo "v0.0")
-          
+
           # Remove 'v' prefix for version comparison
           LATEST_VERSION=${LATEST_TAG#v}
           echo "has_update=false" >> $GITHUB_OUTPUT
-          
+
           if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
             echo "has_update=true" >> $GITHUB_OUTPUT
           fi
@@ -37,7 +37,7 @@ jobs:
         name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
       - if: steps.version.outputs.has_update == 'true'
         name: Build release

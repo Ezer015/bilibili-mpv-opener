@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Bilibili MPV Opener",
+  "version": "0.3",
+  "description": "Opens Bilibili videos in MPV instead of browser",
+  "permissions": [
+    "nativeMessaging",
+    "tabs"
+  ],
+  "host_permissions": [
+    "*://*.bilibili.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.bilibili.com/*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
+  "background": {}
+}
