@@ -1,6 +1,5 @@
-// Create and inject styles for the MPV button
-const style = document.createElement('style');
-style.textContent = `
+// Define styles for the MPV button
+const mpvStyles = `
 .mpv-container {
     position: absolute;
     top: 0;
@@ -36,8 +35,8 @@ style.textContent = `
 .mpv-play-button::before {
     content: "";
     display: inline-block;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E");
     background-size: contain;
     background-repeat: no-repeat;
@@ -57,45 +56,51 @@ style.textContent = `
 
 /* Track hover state of all possible video containers */
 .bili-video-card:hover .mpv-container .mpv-play-button,
-.video-card:hover .mpv-container .mpv-play-button,
-.bili-video-card__wrap:hover .mpv-container .mpv-play-button,
-.video-item:hover .mpv-container .mpv-play-button,
-.media-list-item:hover .mpv-container .mpv-play-button,
-a.video-awesome-img:hover .mpv-container .mpv-play-button {
+.card-box:hover .mpv-container .mpv-play-button,
+.video-card:hover .mpv-container .mpv-play-button {
     opacity: 1;
 }`;
-document.head.appendChild(style);
+// Function to inject styles
+function injectStyles() {
+    // Inject to main document
+    const mainStyle = document.createElement('style');
+    mainStyle.textContent = mpvStyles;
+    document.head.appendChild(mainStyle);
 
-// Add search page specific styles
-if (window.location.hostname === 'search.bilibili.com') {
-    const searchStyle = document.createElement('style');
-    searchStyle.textContent = `
-    .bili-video-card__skeleton--cover,
-    .bili-video-card__skeleton--info,
-    .bili-video-card__skeleton--right,
-    .bili-video-card__skeleton--text,
-    .bili-video-card__skeleton--light {
-        display: none !important;
-    }`;
-    document.head.appendChild(searchStyle);
+    // Inject to Shadow DOM if available
+    const bewly = document.querySelector('#bewly');
+    if (bewly && bewly.shadowRoot) {
+        const shadowStyle = document.createElement('style');
+        shadowStyle.textContent = mpvStyles;
+        bewly.shadowRoot.appendChild(shadowStyle);
+    }
+
+    // Watch for Shadow Root changes
+    const styleObserver = new MutationObserver(() => {
+        const bewly = document.querySelector('#bewly');
+        if (bewly && bewly.shadowRoot && !bewly.shadowRoot.querySelector('style')) {
+            const shadowStyle = document.createElement('style');
+            shadowStyle.textContent = mpvStyles;
+            bewly.shadowRoot.appendChild(shadowStyle);
+        }
+    });
+
+    styleObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 }
+
+// Inject styles
+injectStyles();
 
 // Function to add MPV button to a video thumbnail
 function addMpvButton(container) {
-    // Skip if:
-    // 1. Button already exists
-    // 2. Container is a skeleton
-    // 3. Container is inside a carousel/swiper
-    // 4. Container has no actual video content
-    if (container.querySelector('.mpv-container') ||
-        container.classList.contains('bili-video-card__skeleton') ||
-        container.closest('.bili-video-card__skeleton') ||
-        container.closest('.recommended-swipe-core') ||
-        container.closest('.vui_carousel') ||
-        container.closest('.carousel')) return;
+    if (container.querySelector('.mpv-container')) return;
 
-    // Find the video link - handle container being the <a> element itself
-    const videoLink = container.matches('a[href*="/video/"]') ? container : container.querySelector('a[href*="/video/"]');
+    // Find the video link - handle container being the <a> element itself and check for shadow root
+    const videoLink = container.matches('a[href]') ? container :
+        (container.shadowRoot?.querySelector('a[href]') || container.querySelector('a[href]'));
     if (!videoLink) return;
 
     // Get full URL for relative paths
@@ -103,8 +108,8 @@ function addMpvButton(container) {
     if (!href) return;
 
     const videoPattern = /\/video\/(BV\w+)/i;
-    const match = href.match(videoPattern);
-    if (!match) return;
+    const livePattern = /live.bilibili.com\/(\d+)/i;
+    if (!href.match(videoPattern) && !href.match(livePattern)) return;
 
     // Create container for the button
     const buttonContainer = document.createElement('div');
@@ -138,26 +143,39 @@ function addMpvButton(container) {
     wrapper.appendChild(buttonContainer);
 }
 
+// Function to get elements from Shadow DOM
+function queryAllShadowHosts(root, selector) {
+    const elements = [];
+    const shadowHost = document.querySelector('#bewly');
+
+    if (shadowHost && shadowHost.shadowRoot) {
+        // Search in the bewly shadow root
+        elements.push(...shadowHost.shadowRoot.querySelectorAll(selector));
+    }
+
+    // Also search in regular DOM as fallback
+    elements.push(...document.querySelectorAll(selector));
+
+    return elements;
+}
+
 // Function to observe DOM changes for dynamically loaded content
 function observeVideoThumbnails() {
     // Process existing thumbnails
     const selectors = [
         '.bili-video-card',
-        '.video-card',
-        '.bili-video-card__wrap',
-        '.video-item',
-        '.media-list-item',
-        '.video-awesome-img'
+        '.card-box',
+        '.video-card'
     ];
 
     selectors.forEach(selector => {
-        document.querySelectorAll(selector).forEach(el => {
+        queryAllShadowHosts(document, selector).forEach(el => {
             addMpvButton(el);
         });
     });
 
-    // Create an observer for dynamic content
-    const observer = new MutationObserver((mutations) => {
+    // Create observers
+    const shadowRootObserver = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             mutation.addedNodes.forEach((node) => {
                 if (node.nodeType === 1) { // Element node
@@ -165,6 +183,7 @@ function observeVideoThumbnails() {
                         if (node.matches?.(selector)) {
                             addMpvButton(node);
                         }
+                        // Check within the added node
                         node.querySelectorAll(selector).forEach(el => {
                             addMpvButton(el);
                         });
@@ -174,8 +193,40 @@ function observeVideoThumbnails() {
         });
     });
 
-    // Start observing
-    observer.observe(document.body, {
+    // Observe both regular DOM and Shadow DOM
+    const bewlyElement = document.querySelector('#bewly');
+    if (bewlyElement && bewlyElement.shadowRoot) {
+        shadowRootObserver.observe(bewlyElement.shadowRoot, {
+            childList: true,
+            subtree: true
+        });
+    }
+
+    // Also observe regular DOM as fallback
+    shadowRootObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Watch for shadow root attachment
+    const rootObserver = new MutationObserver(() => {
+        const bewly = document.querySelector('#bewly');
+        if (bewly && bewly.shadowRoot) {
+            shadowRootObserver.observe(bewly.shadowRoot, {
+                childList: true,
+                subtree: true
+            });
+            // Process any existing elements in the shadow root
+            selectors.forEach(selector => {
+                bewly.shadowRoot.querySelectorAll(selector).forEach(el => {
+                    addMpvButton(el);
+                });
+            });
+        }
+    });
+
+    // Observe for shadow root attachment
+    rootObserver.observe(document.body, {
         childList: true,
         subtree: true
     });
