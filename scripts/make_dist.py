@@ -95,6 +95,7 @@ def create_distribution_package():
 
             # Add Python scripts
             zf.write(root_dir / "native" / "open_in_mpv.py", "native/open_in_mpv.py")
+            zf.write(root_dir / "native" / "open_in_mpv.bat", "native/open_in_mpv.bat")
             zf.write(root_dir / "scripts" / "setup.py", "scripts/setup.py")
 
     print("Distribution package created at dist/bilibili-mpv-opener-release.zip")

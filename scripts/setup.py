@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 import sys
 import json
@@ -78,6 +78,31 @@ def get_chrome_extension_id():
         return ext_id
 
 
+def setup_windows_registry(manifest_path, is_chrome):
+    if sys.platform != "win32":
+        return
+
+    # Import winreg only on Windows
+    import winreg
+
+    try:
+        # Determine registry location based on browser
+        registry_location = (
+            r"SOFTWARE\Google\Chrome\NativeMessagingHosts\open_in_mpv"
+            if is_chrome
+            else r"SOFTWARE\Mozilla\NativeMessagingHosts\open_in_mpv"
+        )
+
+        # Create registry key
+        with winreg.CreateKey(winreg.HKEY_CURRENT_USER, registry_location) as key:
+            # Set default value to manifest path
+            winreg.SetValue(key, "", winreg.REG_SZ, str(manifest_path))
+
+        print(f"Registry key added: HKEY_CURRENT_USER\\{registry_location}")
+    except Exception as e:
+        print(f"Warning: Failed to set registry key: {e}", file=sys.stderr)
+
+
 def setup_browser(native_path, script_dest, is_chrome, chrome_id=None):
     # Create native messaging directory if it doesn't exist
     native_path.mkdir(parents=True, exist_ok=True)
@@ -86,11 +111,20 @@ def setup_browser(native_path, script_dest, is_chrome, chrome_id=None):
     shutil.copy2(script_dest, native_path / "open_in_mpv.py")
     (native_path / "open_in_mpv.py").chmod(0o755)  # Make executable
 
+    # Copy batch file only on Windows
+    if sys.platform == "win32":
+        shutil.copy2(
+            script_dest.with_name("open_in_mpv.bat"), native_path / "open_in_mpv.bat"
+        )
+
     # Create manifest
     manifest = {
         "name": "open_in_mpv",
         "description": "Native messaging host to open videos in MPV",
-        "path": str(native_path / "open_in_mpv.py"),
+        "path": str(
+            native_path
+            / ("open_in_mpv.bat" if sys.platform == "win32" else "open_in_mpv.py")
+        ),
         "type": "stdio",
         "allowed_origins": (
             [chrome_id]
@@ -109,6 +143,10 @@ def setup_browser(native_path, script_dest, is_chrome, chrome_id=None):
     manifest_path = native_path / "open_in_mpv.json"
     with open(manifest_path, "w") as f:
         json.dump(manifest, f, indent=2)
+
+    # Setup Windows registry if needed
+    if sys.platform == "win32":
+        setup_windows_registry(manifest_path, is_chrome)
 
     print(f"\nConfigured for {'Chrome' if is_chrome else 'Firefox'}:")
     print(f"Manifest: {manifest_path}")

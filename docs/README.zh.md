@@ -6,10 +6,10 @@
 
 [English](../README.md) | **简体中文**
 
+[![Version](https://img.shields.io/github/v/release/Ezer015/bilibili-mpv-opener?color=brightgreen&label=Release&style=flat-square)](https://github.com/Ezer015/bilibili-mpv-opener/releases)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Firefox](https://img.shields.io/badge/Firefox-Support-FF7139?style=flat-square&logo=firefox)](https://www.mozilla.org/firefox/new/)
 [![Chrome](https://img.shields.io/badge/Chrome-Support-4285F4?style=flat-square&logo=googlechrome)](https://www.google.com/chrome/)
-[![MPV](https://img.shields.io/badge/MPV-Player-7B68EE?style=flat-square&logo=mpv)](https://mpv.io)
 
 ![截图](../docs/images/screenshot.png)
 
@@ -64,7 +64,7 @@
       python3 scripts/setup.py
 
       # Windows：
-      python scripts/setup.py
+      python scripts\setup.py
       ```
 
       然后根据提示：
