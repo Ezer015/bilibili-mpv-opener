@@ -26,17 +26,17 @@
 
 ## 🚀 快速开始
 
-1. **安装 MPV 播放器**
+1. **安装 MPV 播放器和 yt-dlp**
 
    ```bash
    # Ubuntu/Debian
-   sudo apt install mpv
+   sudo apt install mpv yt-dlp
    
    # macOS
-   brew install mpv
+   brew install mpv yt-dlp
    
    # Windows
-   winget install mpv
+   winget install mpv yt-dlp
    ```
 
 2. **获取扩展**
@@ -84,6 +84,7 @@
 - Firefox / Chrome
 - Python 3.x
 - MPV 播放器
+- yt-dlp
 
 ### 本地测试
 

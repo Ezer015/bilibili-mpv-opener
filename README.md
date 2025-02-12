@@ -26,17 +26,17 @@ A browser extension that enhances your Bilibili viewing experience by adding the
 
 ## 🚀 Quick Start
 
-1. **Install MPV Player**
+1. **Install MPV Player and yt-dlp**
 
    ```bash
    # Ubuntu/Debian
-   sudo apt install mpv
+   sudo apt install mpv yt-dlp
    
    # macOS
-   brew install mpv
+   brew install mpv yt-dlp
    
    # Windows
-   winget install mpv
+   winget install mpv yt-dlp
    ```
 
 2. **Get the Extension**
@@ -84,6 +84,7 @@ A browser extension that enhances your Bilibili viewing experience by adding the
 - Firefox / Chrome
 - Python 3.x
 - MPV player
+- yt-dlp
 
 ### Local Testing
 
